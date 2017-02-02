@@ -22,7 +22,11 @@
 <div id="mapid" style="width: 1200px; height: 800px;"></div>
 <script>
 	
-	var locations = [{coordinates: [52.486298, 13.363686], name: "Jonas Kneipe"}];
+	var locations = [{coordinates: [52.486298, 13.363686], name: "Jonas Kneipe", type: "keipe"}, 
+			 {coordinates: [52.488265, 13.369281], name: "Blues Garage", type: "keipe"},
+			 {coordinates: [52.480542, 13.350699], name: "Gemütlichkeit bei Rena", type: "keipe"},
+			 {coordinates: [52.482117, 13.351443], name: "Otto Schruppke", type: "keipe"},
+			 {coordinates: [52.479248, 13.349706], name: "Resonanz", type: "keipe"},];
 
 	var mymap = L.map('mapid').setView([52.48407, 13.35794], 16);
 
