@@ -19,7 +19,7 @@
 
 
 
-<div id="mapid" style="width: 1000px; height: 600px;"></div>
+<div id="mapid" style="width: 1200px; height: 800px;"></div>
 <script>
 
 	var mymap = L.map('mapid').setView([52.4893, 13.3525], 16);
@@ -35,18 +35,7 @@
 	L.marker([52.4893, 13.3525]).addTo(mymap)
 		.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
-	L.circle([52.4893, 13.3525], 500, {
-		color: 'red',
-		fillColor: '#f03',
-		fillOpacity: 0.5
-	}).addTo(mymap).bindPopup("I am a circle.");
-
-	L.polygon([
-		[51.509, -0.08],
-		[51.503, -0.06],
-		[51.51, -0.047]
-	]).addTo(mymap).bindPopup("I am a polygon.");
-
+	
 
 	var popup = L.popup();
 
