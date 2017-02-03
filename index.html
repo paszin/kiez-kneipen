@@ -42,13 +42,13 @@ html, body, #mapid {
 	
 	var beerIcon = L.icon({
     iconUrl: 'beer4.png',
-    shadowUrl: 'beer4.png',
+    //shadowUrl: 'beer4.png',
 
-    iconSize:     [38, 95], // size of the icon
-    shadowSize:   [50, 64], // size of the shadow
-    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    iconSize:     [30, 30], // size of the icon
+    shadowSize:   [0, 0], // size of the shadow
+    iconAnchor:   [30, 15], // point of the icon which will correspond to marker's location
+    shadowAnchor: [0, 0],  // the same for the shadow
+    popupAnchor:  [15, 30] // point from which the popup should open relative to the iconAnchor
 });
 
 	var mymap = L.map('mapid').setView([52.48407, 13.35794], 16);
