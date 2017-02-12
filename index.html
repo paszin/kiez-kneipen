@@ -11,6 +11,14 @@
 
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 	<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+	<script type="text/javascript" src="./L.Control.Button.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/kybarg/mdl-selectfield/mdl-menu-implementation/mdl-selectfield.min.js"></script>
+<link rel="stylesheet" href="https://cdn.rawgit.com/kybarg/mdl-selectfield/mdl-menu-implementation/mdl-selectfield.min.css">
+<script type="text/javascript" src="./locations.js"></script>
+
 
 	<style>
 	body {
@@ -22,6 +30,9 @@ html, body, #mapid {
     width: 100vw;
 }
 
+.leaflet-control-layers {
+visibility: hidden !important;
+}
 	</style>
 
 
@@ -30,16 +41,38 @@ html, body, #mapid {
 <body>
 
 
+	<div id="mapid"></div>
 
-<div id="mapid"></div>
+	<button id="searchbutton" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+	  <i class="material-icons">search</i>
+	</button>
+
+	<dialog class="mdl-dialog">
+	 <h4 class="mdl-dialog__title">Suche</h4>
+	 <div class="mdl-dialog__content">
+
+		 <form>
+      <div class="mdl-selectfield mdl-js-selectfield">
+        <select class="mdl-selectfield__select" id="type" name="search">
+          <option value="option1">Kneipe</option>
+          <!-- <option value="option2">Bar</option>
+          <option value="option3">Café</option>
+          <option value="option4">Späti</option>
+          <option value="option5">Döner</option> -->
+        </select>
+      </div>
+    </form>
+
+	 </div>
+	 <div class="mdl-dialog__actions">
+		 <button type="button" class="mdl-button start_search mdl-button--accent">Suchen</button>
+		 <button type="button" class="mdl-button close">Schließen</button>
+	 </div>
+ </dialog>
+
+
 <script>
 
-	var locations = [{coordinates: [52.486298, 13.363686], name: "Jonas Kneipe", type: "kneipe"},
-			 {coordinates: [52.488265, 13.369281], name: "Blues Garage", type: "kneipe"},
-			 {coordinates: [52.480542, 13.350699], name: "Gemütlichkeit bei Rena", type: "kneipe"},
-			 {coordinates: [52.482117, 13.351443], name: "Otto Schruppke", url: "", type: "kneipe"},
-			 {coordinates: [52.479248, 13.349706], name: "Resonanz", url: "https://www.google.de/maps/place/Resonanz", type: "kneipe"},
-			 {coordinates: [52.487435, 13.375139], name: "Pavlov's", url: "https://www.google.de/maps/place/Pavlov%27s", type: "kneipe"}];
 
 	var beerIcon = L.icon({
     iconUrl: 'beer4.png',
@@ -78,14 +111,73 @@ var coffeeIcon = L.icon({
 	}).addTo(mymap);
 
 	locations.forEach(function(data) {
+		//generate html ro display additional information
+		var additionalHtml = "";
+		if (data.hasOwnProperty("hasPool") && data.hasPool) {
+			additionalHtml += "<p>mit Billard</p>";
+		}
+		if (data.hasOwnProperty("hasKicker") && data.hasKicker) {
+			additionalHtml += "<p>mit Kicker</p>";
+		}
 		var m = L.marker(data.coordinates,  {icon: iconMapping[data.type]}).addTo(mymap)
-			.bindPopup("<b>"+data.name+"</b> <a href=\"" + data.url + "\"><Los</a>");
+			.bindPopup("<b>"+data.name+"</b> <br>" + additionalHtml);
 			markers[data.type].push(m);
 		}
 	)
 
 	var kneipenMarkers = L.layerGroup(markers["kneipe"]);
-	L.control.layers({}, {"Kneipen": kneipenMarkers}).addTo(mymap);
+	var cafeMarkers = L.layerGroup(markers["cafe"]);
+	L.control.layers({}, {"Kneipen": kneipenMarkers, "Cafés": cafeMarkers}).addTo(mymap);
+
+
+
+	mymap.locate({setView: false});
+
+	function onLocationFound(e) {
+    var radius = e.accuracy / 2;
+
+    L.marker(e.latlng).addTo(mymap)
+        .bindPopup("You are within " + radius + " meters from this point");
+
+    L.circle(e.latlng, radius).addTo(mymap);
+}
+
+mymap.on('locationfound', onLocationFound);
+
+function onLocationError(e) {
+    alert(e.message);
+}
+
+mymap.on('locationerror', onLocationError);
+
+var button = new L.Control.Button(L.DomUtil.get('searchbutton'));
+button.addTo(mymap);
+button.on('click', function () {
+     dialog.showModal();
+});
+
+
+var dialog = document.querySelector('dialog');
+if (! dialog.showModal) {
+		 dialogPolyfill.registerDialog(dialog);
+	 }
+
+	 dialog.querySelector('.close').addEventListener('click', function() {
+		 cafeMarkers.eachLayer(function (marker) {
+					 marker.setOpacity(1);
+				 }
+			 );
+		 dialog.close();
+	 });
+
+	 dialog.querySelector('.start_search').addEventListener('click', function() {
+		 cafeMarkers.eachLayer(function (marker) {
+					 marker.setOpacity(0);
+				 }
+			 );
+		 dialog.close();
+
+	 });
 
 
 
